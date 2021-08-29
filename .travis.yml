@@ -1,12 +1,13 @@
 language: java
 jdk:
-  - openjdk8
+  - openjdk11
 
 services:
   - mysql
   - redis
 
 before_install:
+  - chmod +x mvnw
   - mysql -e "create database if not exists oauth2;"
   - mysql -e "create user 'test'@'%' identified by 'test';"
   - mysql -e "grant all on oauth2.* to 'test'@'%';"
