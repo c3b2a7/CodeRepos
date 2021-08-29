@@ -1,0 +1,122 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://lovebirdy:8000/eureka/
+    enabled: false
+server:
+  port: 8080
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+spring:
+  application:
+    name: api-gateway
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: springcloud
+    password: springcloud
+  redis:
+    cluster:
+      nodes: redis-7000:7000,redis-7001:7001,redis-7002:7002,redis-7003:7003,redis-7004:7004,redis-7005:7005
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: kafka1:9092,kafka2:9093,kafka3:9094
+    gateway:
+      globalcors:
+        cors-configurations:
+          - /**:
+              allowedOrigins: '*'
+              allowedMethods: GET,POST,PUT,DELETE
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: url-proxy-1
+          uri: https://lolico.me
+          predicates:
+            - Path=/lolico/**
+        - id: local-fallback-forwarder
+          uri: lb://api-gateway
+          predicates:
+            - Path=/fallback
+          filters:
+            - FallbackHeaders
+      default-filters:
+        - name: Hystrix
+          args:
+            name: default
+            fallbackUri: forward:/fallback
+        - name: Retry
+          args:
+            retries: 1
+            series: SERVER_ERROR
+            statuses: OK
+            methods: GET
+            exceptions: java.io.IOException
+        - name: RequestRateLimiter
+          args:
+            key-resolver: '#{@keyResolver}' #使用SpEL名称引用自定义KeyResolver
+            redis-rate-limiter.replenishRate: 10 #每秒放几个令牌
+            redis-rate-limiter.burstCapacity: 15 #令牌桶最大容量
+ribbon:
+  ReadTimeout: 2500
+  ConnectTimeout: 500
+  MaxAutoRetriesNextServer: 0
+  MaxAutoRetries: 0
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 3000
+from: api-gateway
+auth-server-url: http://localhost:${server.port:8081}/auth
+security:
+  oauth2:
+    client:
+      client-id: gateway
+      client-secret: gateway
+      #      scope: all
+      #      grant-type: authorization_code,password,refresh_token
+      user-authorization-uri: ${auth-server-url}/oauth/authorize
+      access-token-uri: ${auth-server-url}/oauth/token
+    resource:
+      #      jwt:
+      #        key-uri: ${auth-server-url}/oauth/token_key
+      token-info-uri: ${auth-server-url}/oauth/check_token #换成token_key的话，不要通过zuul网关
+    sso:
+      login-path: /login
+zuul:
+  ignored-services: '*'
+  routes:
+    authorization-server:
+      path: /auth/**
+      url: http://localhost:8081/
+      sensitive-headers: Cookie #认证服务器通过Set-Cookie保证跳转前后的状态，由于我们通过网关转发请求，所以需要传递Set-Cookie给认证服务器
+    resource:
+      path: /resource/**
+      url: http://localhost:10000/
+  sensitive-headers: Cookie,Set-Cookie #资源服务器是无状态的，但是需要传递authorization以进行认证
+  add-proxy-headers: true
+
+
+#zuul:
+#  add-host-header: true
+#  decode-url: false
+#  ignored-services: 'api-gateway'
+#  retryable: true
+#  routes:
+#    feign-consumer: /feign-consumer/**
+logging:
+  level:
+    org:
+      springframework:
+        security: debug
+        web: debug

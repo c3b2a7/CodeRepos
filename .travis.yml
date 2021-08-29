@@ -1,0 +1,23 @@
+language: java
+jdk:
+  - openjdk8
+
+services:
+  - mysql
+  - redis
+
+before_install:
+  - mysql -e "create database if not exists oauth2;"
+  - mysql -e "create user 'test'@'%' identified by 'test';"
+  - mysql -e "grant all on oauth2.* to 'test'@'%';"
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
+branches:
+  only:
+    - master
+
+cache:
+  directories:
+    - $HOME/.m2

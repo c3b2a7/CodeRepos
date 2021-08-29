@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>me.lolico</groupId>
+    <artifactId>CodeRepos</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>CodeRepos</name>
+    <description>Code repositories by lolico.</description>
+
+    <modules>
+        <module>samples</module>
+        <module>learning</module>
+    </modules>
+
+    <properties>
+        <spring-boot.version>2.4.10</spring-boot.version>
+        <spring-cloud.version>2020.0.3</spring-cloud.version>
+    </properties>
+
+</project>

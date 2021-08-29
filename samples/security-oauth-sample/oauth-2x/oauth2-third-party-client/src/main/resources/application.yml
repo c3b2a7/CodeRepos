@@ -1,0 +1,37 @@
+server:
+  port: 8000
+logging:
+  level:
+    root: WARN
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.springframework.security.oauth2: INFO
+spring:
+  thymeleaf:
+    cache: false
+security:
+  oauth2:
+    client:
+      messaging-client-auth-code:
+        client-id: oauth-client
+        client-secret: oauth-client
+        grant-type: authorization_code
+        user-authorization-uri: http://auth-server:8081/oauth/authorize
+        access-token-uri: http://auth-server:8081/oauth/token
+        scope: user_info.read
+        pre-established-redirect-uri: http://localhost:8000/authorized
+        use-current-uri: false
+      messaging-client-client-creds:
+        client-id: oauth-client
+        client-secret: oauth-client
+        grant-type: client_credentials
+        access-token-uri: http://auth-server:8081/oauth/token
+        scope: user_info.read
+      messaging-client-password:
+        client-id: oauth-client
+        client-secret: oauth-client
+        grant-type: password
+        access-token-uri: http://auth-server:8081/oauth/token
+        scope: user_info.read
+messages:
+  base-uri: http://localhost:10000/user/read
