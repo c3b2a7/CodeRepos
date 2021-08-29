@@ -16,6 +16,7 @@
     <modules>
         <module>security-oauth-sample</module>
         <module>spring-cloud-sample</module>
+        <module>dubbo-sample</module>
     </modules>
 
 </project>
