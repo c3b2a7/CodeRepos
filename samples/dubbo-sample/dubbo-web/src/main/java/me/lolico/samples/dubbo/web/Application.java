@@ -3,21 +3,24 @@ package me.lolico.samples.dubbo.web;
 import me.lolico.samples.dubbo.common.CalculateService;
 import me.lolico.samples.dubbo.common.HelloService;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @SpringBootApplication
+@ImportResource("classpath*:dubbo-bean-*.xml")
 public class Application extends SpringBootServletInitializer {
 
-    @DubboReference(check = false)
+    @Autowired
     private HelloService helloService;
 
-    @DubboReference(check = false)
+    @Autowired
     private CalculateService calculateService;
 
     @GetMapping("/say")

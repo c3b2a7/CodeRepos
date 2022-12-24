@@ -2,18 +2,18 @@ package me.lolico.samples.dubbo.provider.service;
 
 import me.lolico.samples.dubbo.common.CalculateService;
 import me.lolico.samples.dubbo.common.HelloService;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.apache.dubbo.config.annotation.DubboService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
 /**
  * @author Lolico Li
  */
-@DubboService
+@Service
 public class HelloServiceImpl implements HelloService {
 
     private final Logger logger = LoggerFactory.getLogger(HelloServiceImpl.class);
@@ -23,7 +23,7 @@ public class HelloServiceImpl implements HelloService {
     @Value("${spring.application.name}")
     private String serviceName;
 
-    @DubboReference
+    @Autowired
     private CalculateService calculateService;
 
     @Override
